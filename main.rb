@@ -1,19 +1,22 @@
+require_relative 'user'
 require_relative 'bank_account'
 require_relative 'bank_system'
 
 # Main program
 bank_system = BankSystem.new
 
-puts "Welcome! \n What do you want to do?"
+# Create default accounts
+user1 = User.new("Naruto", "Software Engineer", "naruto.hokage@yahoo.com", "Emil Racovita Street No 6")
+bank_account1 = bank_system.create_account(user1)
+bank_account1.set_pin("0000")
 
-loop do
-  puts "\n Press: \n 1 - create account; \n 2 - display all the accounts; \n 3 - retrieve money; \n 4 - deposit money; \n 5 - display current balance; \n 6 - exit. "
+user2 = User.new("Itachi Uchiha", "Doctor", "itachi.uchiha@yahoo.com", "Gh. Baritiu Street No 7")
+bank_account2 = bank_system.create_account(user2)
+bank_account2.set_pin("1111")
 
-  choice = gets.chomp.to_i
-
-  case choice
-  when 1
-    puts "Hi! \n Insert your name."
+# Methods that ensure interaction with the user
+def create_account_interaction(bank_system)
+  puts "Hi! \n Insert your name."
     name = gets.chomp
     name.downcase!
     name.capitalize!
@@ -30,8 +33,8 @@ loop do
     address = gets.chomp
     address.downcase!
 
-    account = bank_system.create_account(name, job, email, address)
-
+    user = User.new(name, job, email, address)
+    account = bank_system.create_account(user)
     puts "Set a PIN for your account. \n It needs to be 4 digits long. "
     pin = gets.chomp
 
@@ -41,65 +44,79 @@ loop do
     end
 
     account.set_pin(pin)
-  when 2
-    bank_system.display_accounts
-  when 3
-    puts "\n Insert your name. "
+end
+
+def withdraw_amount_interaction(bank_system)
+  puts "\n Insert your name. "
     name = gets.chomp
+    name.downcase!
+    name.capitalize!
     account = bank_system.find_account_by_name(name)
     if account.nil?
       puts "Account not found. Please create an account first."
-    else
-      puts "#{name}, enter your PIN: "
-      insert_pin = gets.chomp
-      if insert_pin == account.pin
-        puts "Insert sum in $ to retrieve, but no more than 5000$ "
-        amount = gets.chomp.to_f
-        if amount <= 0
-          puts "Invalid amount. Please enter a positive value."
-        else
-          account.withdraw_amount(amount)
-        end
+    elsif account.valid_pin?
+      puts "Insert sum in $ to retrieve, but no more than 5000$ "
+      amount = gets.chomp.to_f
+      if account.valid_amount?(amount)
+        account.withdraw_amount(amount)
       else
-        puts "Incorrect PIN. Withdrawal failed."
+      puts "Not enough funds."
       end
+    else 
+      puts "Incorrect PIN. Withdrawal failed."
+  end
+end
+
+def deposit_amount_interaction(bank_system)
+  puts "\n Insert your name. "
+    name = gets.chomp
+    name.downcase!
+    name.capitalize!
+    account = bank_system.find_account_by_name(name)
+    if account.nil?
+      puts "Account with name #{name} not found. \n Please create an account."
+    elsif account.valid_pin?
+      puts "#{name}, insert sum in $ you to deposit"
+      amount = gets.chomp.to_f
+      account.deposit_amount(amount)
+    else
+      puts "Incorrect PIN. Deposit failed."
     end
+end
+
+def display_balance_interaction(bank_system)
+  puts "Insert your name."
+    name = gets.chomp
+    name.downcase!
+    name.capitalize!
+    account = bank_system.find_account_by_name(name)
+    if account.nil?
+      puts "Account with name #{name} not found. \n Please create an account."
+    elsif account.valid_pin?
+      account.display_balance
+    else
+      puts "Incorrect PIN. Access denied."
+    end
+end
+
+puts "Welcome! \n What do you want to do?"
+
+loop do
+  puts "\n Press: \n 1 - create account; \n 2 - display all the accounts; \n 3 - retrieve money; \n 4 - deposit money; \n 5 - display current balance; \n 6 - exit. "
+
+  choice = gets.chomp.to_i
+
+  case choice
+  when 1
+    create_account_interaction(bank_system)
+  when 2
+    bank_system.display_accounts
+  when 3
+    withdraw_amount_interaction(bank_system)
   when 4
-    puts "\n Insert your name. "
-    name = gets.chomp
-    account = bank_system.find_account_by_name(name)
-    if account.nil?
-      puts "Account with name #{name} not found. \n Please create an account."
-    else
-      puts "#{name}, enter your PIN: "
-      insert_pin = gets.chomp
-      if insert_pin == account.pin
-        puts "Insert sum in $ to deposit"
-        amount = gets.chomp.to_f
-        if amount <= 0
-          puts "Please enter a positive amount of money to deposit."
-        else
-          account.deposit_amount(amount)
-        end
-      else
-        puts "Incorrect PIN. Deposit failed."
-      end
-    end
-when 5
-    puts "Insert your name."
-    name = gets.chomp
-    account = bank_system.find_account_by_name(name)
-    if account.nil?
-      puts "Account with name #{name} not found. \n Please create an account."
-    else
-      print "Insert PIN: "
-      insert_pin = gets.chomp
-      if insert_pin == account.pin
-        account.display_balance
-      else
-        puts "Incorrect PIN. Access denied."
-      end
-    end
+    deposit_amount_interaction(bank_system)
+  when 5
+    display_balance_interaction(bank_system)
   when 6
     puts "See you later!"
     break
