@@ -1,4 +1,4 @@
-require_relative '../bank_account.rb'
+require_relative '../bank_account'
 require_relative '../user'
 
 RSpec.describe BankAccount do

@@ -28,11 +28,16 @@ RSpec.describe BankSystem do
   end
 
   describe '#display_accounts' do
+    let(:user1) { User.new("Naruto Uzumaki", "Software Engineer", "naruto.hokage@yahoo.com", "Emil Racovita Street No 6") }
+    let(:user2) { User.new("Itachi Uchiha", "Software Engineer", "itachi.hokage@yahoo.com", "Emil Racovita Street No 6") }
+    let(:bank_system) { BankSystem.new }
+
+    before do
+      @bank_account1 = bank_system.create_account(user1)
+      @bank_account2 = bank_system.create_account(user2)
+    end
+
     it 'display all account-related information' do
-      user1 = User.new("Naruto Uzumaki", "Software Engineer", "naruto.hokage@yahoo.com", "Emil Racovita Street No 6")
-      user2 = User.new("Itachi Uchiha", "Software Engineer", "itachi.hokage@yahoo.com", "Emil Racovita Street No 6")
-      bank_account1 = bank_system.create_account(user1)
-      bank_account2 = bank_system.create_account(user2)
       expected_output = <<~OUTPUT
         Account number 1:
         Personal data
@@ -66,6 +71,7 @@ RSpec.describe BankSystem do
       found_account = bank_system.find_account_by_name("Naruto Uzumaki")
       expect(found_account).to eq(account)
     end
+    
     it 'nil returned when no account corresponds to name' do
       found_account = bank_system.find_account_by_name('Name which does not exist')
       expect(found_account).to be_nil
