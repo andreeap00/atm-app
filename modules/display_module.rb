@@ -1,8 +1,6 @@
 require_relative '../bank_account'
 
 module InfoDisplay 
-
-  # methods to display info regarding balance and account are managed here
   def display_balance
     puts "Your current balance is #{@balance}$"
     puts "Daily withdrawal limit rest: $#{@remaining_daily_withdrawal_limit}"

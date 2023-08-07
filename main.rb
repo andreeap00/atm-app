@@ -48,55 +48,40 @@ end
 
 def withdraw_amount_interaction(bank_system)
   puts "\n Insert your name. "
-    name = gets.chomp
-    name.downcase!
-    name.capitalize!
-    account = bank_system.find_account_by_name(name)
-    if account.nil?
-      puts "Account not found. Please create an account first."
-    elsif account.valid_pin?
-      puts "Insert sum in $ to retrieve, but no more than 5000$ "
-      amount = gets.chomp.to_f
-      if account.valid_amount?(amount)
-        account.withdraw_amount(amount)
-      else
-      puts "Not enough funds."
-      end
-    else 
-      puts "Incorrect PIN. Withdrawal failed."
-  end
+  name = gets.chomp
+  name.downcase!
+  name.capitalize!
+  account = bank_system.find_account_by_name(name)
+  return puts "Account with name #{name} not found. \n Please create an account." if account.nil?
+  return puts "Incorrect PIN. Withdrawal failed." unless account.valid_pin?
+  puts "#{name}, insert sum in $ to retrieve, but no more than total of 5000$ a day."
+  amount = gets.chomp.to_f
+  return puts "Not enough funds." unless account.valid_amount?(amount)
+  account.withdraw_amount(amount)
 end
 
 def deposit_amount_interaction(bank_system)
   puts "\n Insert your name. "
-    name = gets.chomp
-    name.downcase!
-    name.capitalize!
-    account = bank_system.find_account_by_name(name)
-    if account.nil?
-      puts "Account with name #{name} not found. \n Please create an account."
-    elsif account.valid_pin?
-      puts "#{name}, insert sum in $ you to deposit"
-      amount = gets.chomp.to_f
-      account.deposit_amount(amount)
-    else
-      puts "Incorrect PIN. Deposit failed."
-    end
+  name = gets.chomp
+  name.downcase!
+  name.capitalize!
+  account = bank_system.find_account_by_name(name)
+  return puts "Account with name #{name} not found. \n Please create an account." if account.nil?
+  return  puts "Incorrect PIN. Deposit failed." unless account.valid_pin?
+  puts "#{name}, insert sum in $ you to deposit"
+  amount = gets.chomp.to_f
+  account.deposit_amount(amount)
 end
 
 def display_balance_interaction(bank_system)
   puts "Insert your name."
-    name = gets.chomp
-    name.downcase!
-    name.capitalize!
-    account = bank_system.find_account_by_name(name)
-    if account.nil?
-      puts "Account with name #{name} not found. \n Please create an account."
-    elsif account.valid_pin?
-      account.display_balance
-    else
-      puts "Incorrect PIN. Access denied."
-    end
+  name = gets.chomp
+  name.downcase!
+  name.capitalize!
+  account = bank_system.find_account_by_name(name)
+  return puts "Account with name #{name} not found. \n Please create an account." if account.nil?
+  return account.display_balance if account.valid_pin?
+  puts "Incorrect PIN. Access denied."
 end
 
 puts "Welcome! \n What do you want to do?"

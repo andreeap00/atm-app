@@ -6,7 +6,7 @@ require_relative './modules/display_module'
 class BankAccount
   include Deposit
   include Withdraw
-  include InfoDisplay # module with methods used to display info
+  include InfoDisplay 
   
   attr_accessor :user, :pin, :balance, :last_withdrawal_date, :remaining_daily_withdrawal_limit
   
@@ -26,21 +26,14 @@ class BankAccount
   end
 
   # validate PIN
- def valid_pin?
-    if @pin.nil?
-      puts "PIN required before action."
-      false
-    else
-      puts "Insert your PIN: "
-      entered_pin = gets.chomp
-      if entered_pin == @pin
-        true
-      else
-        puts "PIN is incorrect. Action failed."
-        false
-      end
-    end
-  end
+def valid_pin?
+  return false if @pin.nil?
+  puts "Insert PIN: "
+  entered_pin = gets.chomp
+
+  return false if pin.nil?
+  return true if @pin == entered_pin
+end
 
   # validate requested amount of money
   def valid_amount?(amount)
